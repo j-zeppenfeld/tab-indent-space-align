@@ -1,0 +1,62 @@
+{
+	"name": "tab-indent-space-align",
+	"displayName": "Tab-Indent Space-Align",
+	"description": "Adds editor support for using tabs as indentation but spaces for alignment.",
+	"version": "0.0.1",
+	"publisher": "j-zeppenfeld",
+	"icon": "images/icon.png",
+	"keywords": [
+		"vscode",
+		"tab",
+		"indent",
+		"space",
+		"align"
+	],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/j-zeppenfeld/tab-indent-space-align.git"
+	},
+	"engines": {
+		"vscode": "^1.29.0"
+	},
+	"categories": [
+		"Formatters",
+		"Other"
+	],
+	"activationEvents": [
+		"*"
+	],
+	"main": "./out/extension",
+	"contributes": {
+		"keybindings": [
+			{
+				"command": "Alignment Preserving Indent",
+				"key": "tab",
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !suggestWidgetVisible && !inSnippetMode"
+			},
+			{
+				"command": "Alignment Preserving Outdent",
+				"key": "shift+tab",
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !inSnippetMode"
+			},
+			{
+				"command": "Alignment Preserving Newline",
+				"key": "enter",
+				"when": "editorTextFocus && !editorReadOnly"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install"
+	},
+	"devDependencies": {
+		"typescript": "^3.1.4",
+		"vscode": "^1.1.25",
+		"tslint": "^5.8.0",
+		"@types/node": "^8.10.25"
+	}
+}
