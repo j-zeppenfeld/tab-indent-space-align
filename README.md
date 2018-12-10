@@ -20,12 +20,10 @@ There is nothing to configure, just enable the plugin and benefit!
 ## Known Issues
 
 * Auto-indentation upon entering a newline is not yet implemented.
-* Pressing tab for alignment always inserts 4 spaces, without considering
-  tabstops.
 
 ## Release Notes
 
-### 0.0.1
+### 0.0.x
 
 Initial release with basic functionality for alignment preserving indent,
 outdent and newline.

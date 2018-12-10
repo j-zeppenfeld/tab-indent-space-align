@@ -21,16 +21,25 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let document = editor.document;
+			let tabSize = editor.options.tabSize as number;
+			let tab = editor.options.insertSpaces
+			        ? ' '.repeat(tabSize)
+			        : '\t';
+			
 			editor.selections.forEach(it => {
 				// Insert tab or spaces if the selection is empty.
 				if(it.isEmpty) {
 					// Insert tab if the line contains only tab characters prior
 					// to the cursor.
-					if(it.start.character <= document.lineAt(it.start.line).text.search(/[^\t]|$/)) {
-						edit.insert(it.active, '\t');
+					let line = document.lineAt(it.start.line).text;
+					let indent = line.search(/[^\t]|$/);
+					if(it.start.character <= indent) {
+						edit.insert(it.active, tab);
 					} else {
 						// TODO: Determine tab-stops from surrounding lines.
-						edit.insert(it.active, '    ');
+						//       For now, pad to next multiple of tabSize.
+						let used = (it.start.character - indent) % tabSize;
+						edit.insert(it.active, ' '.repeat(tabSize - used));
 					}
 				// Otherwise perform a block indent.
 				} else {
@@ -41,10 +50,9 @@ export function activate(context: vscode.ExtensionContext) {
 					if(end === line || it.end.character > 0) {
 						++end;
 					}
-					// Insert a single leading tab character into each line of
-					// the selection.
+					// Insert a leading tab into each line of the selection.
 					for(; line < end; ++line) {
-						edit.replace(new vscode.Position(line, 0), '\t');
+						edit.replace(new vscode.Position(line, 0), tab);
 					}
 				}
 			});
@@ -68,6 +76,10 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let document = editor.document;
+			let tab = editor.options.insertSpaces
+			        ? ' '.repeat(editor.options.tabSize as number)
+			        : '\t';
+			
 			editor.selections.forEach(it => {
 				// Include last line of selection if only one line is selected
 				// or if a character on the last line is selected.
@@ -76,11 +88,10 @@ export function activate(context: vscode.ExtensionContext) {
 				if(end === line || it.end.character > 0) {
 					++end;
 				}
-				// Remove a single leading tab character from each line in the
-				// selection.
+				// Remove a leading tab from each line of the selection.
 				for(; line < end; ++line) {
-					if(document.lineAt(line).text.startsWith('\t')) {
-						edit.delete(new vscode.Range(line, 0, line, 1));
+					if(document.lineAt(line).text.startsWith(tab)) {
+						edit.delete(new vscode.Range(line, 0, line, tab.length));
 					}
 				}
 			});
