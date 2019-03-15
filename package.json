@@ -2,7 +2,7 @@
 	"name": "tab-indent-space-align",
 	"displayName": "Tab-Indent Space-Align",
 	"description": "Adds editor support for using tabs as indentation but spaces for alignment.",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"publisher": "j-zeppenfeld",
 	"icon": "images/icon.png",
 	"keywords": [
@@ -43,7 +43,7 @@
 			{
 				"command": "Alignment Preserving Newline",
 				"key": "enter",
-				"when": "editorTextFocus && !editorReadOnly"
+				"when": "editorTextFocus && !editorReadOnly && !suggestWidgetVisible"
 			}
 		]
 	},
