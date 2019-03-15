@@ -33,12 +33,22 @@
 			{
 				"command": "Alignment Preserving Indent",
 				"key": "tab",
-				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !suggestWidgetVisible && !inSnippetMode"
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !suggestWidgetVisible && !inSnippetMode && config.editor.tabCompletion!='on'"
+			},
+			{
+				"command": "Alignment Preserving Indent",
+				"key": "tab",
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !suggestWidgetVisible && !inSnippetMode && config.editor.tabCompletion=='on' && !hasOtherSuggestions"
 			},
 			{
 				"command": "Alignment Preserving Outdent",
 				"key": "shift+tab",
-				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !inSnippetMode"
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !inSnippetMode && config.editor.tabCompletion!='on'"
+			},
+			{
+				"command": "Alignment Preserving Outdent",
+				"key": "shift+tab",
+				"when": "editorTextFocus && !editorReadOnly && !editorTabMovesFocus && !inSnippetMode && config.editor.tabCompletion=='on' && !hasOtherSuggestions"
 			},
 			{
 				"command": "Alignment Preserving Newline",
