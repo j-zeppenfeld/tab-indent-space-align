@@ -116,13 +116,34 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let document = editor.document;
+			
 			editor.selections.forEach(it => {
-				// Retrieve leading whitespace from current line.
-				let text = document.lineAt(it.active.line).text;
-				let prefix = text.substring(0, text.search(/\S|$/));
+				// Retrieve leading whitespace from first line.
+				let firstLine = document.lineAt(it.start.line).text;
+				let indent = firstLine.search(/\S|$/);
+				let prefix = firstLine.substring(0, indent);
+				
+				// Retrieve trailing whitespace from last line.
+				let lastLine = document.lineAt(it.end.line).text;
+				let endent = it.end.character
+				           + lastLine.substring(it.end.character).search(/\S|$/);
+				
+				// Move selection start behind prefix.
+				if(it.start.character < indent) {
+					edit.delete(new vscode.Range(
+						it.start.line, 0,
+						it.start.line, it.start.character
+					));
+					edit.insert(it.start, prefix);
+				}
+				
+				// Delete selection and any whitespace after selection end.
+				edit.delete(new vscode.Range(
+					it.start.line, it.start.character,
+					it.end.line, endent
+				));
 				
 				// TODO: Auto-indent if surrounded by braces etc.
-				edit.delete(it);
 				edit.insert(it.start, '\n' + prefix);
 			});
 		});

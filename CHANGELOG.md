@@ -5,6 +5,7 @@ in this file.
 ## [0.0.3]
 * Allow pressing enter for autocompletion.
 * Avoid interfering with editor.tabCompletion next and previous suggestions.
+* Improve enter handling within indentation.
 
 ## [0.0.2]
 * Indent using spaces when the editor is configured to insert spaces for tab.
