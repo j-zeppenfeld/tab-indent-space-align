@@ -116,6 +116,9 @@ export function activate(context: vscode.ExtensionContext) {
 			}
 			
 			let document = editor.document;
+			let tab = editor.options.insertSpaces
+			        ? ' '.repeat(editor.options.tabSize as number)
+			        : '\t';
 			
 			editor.selections.forEach(it => {
 				// Retrieve leading whitespace from first line.
@@ -129,22 +132,70 @@ export function activate(context: vscode.ExtensionContext) {
 				           + lastLine.substring(it.end.character).search(/\S|$/);
 				
 				// Move selection start behind prefix.
+				let beforeText : string;
 				if(it.start.character < indent) {
 					edit.delete(new vscode.Range(
 						it.start.line, 0,
 						it.start.line, it.start.character
 					));
 					edit.insert(it.start, prefix);
+					beforeText = prefix;
+				} else {
+					beforeText = firstLine.substring(0, it.start.character);
 				}
 				
 				// Delete selection and any whitespace after selection end.
+				let afterText = lastLine.substring(endent);
 				edit.delete(new vscode.Range(
 					it.start.line, it.start.character,
 					it.end.line, endent
 				));
 				
+				// Retrieve the line one above the selection start.
+				let oneBeforeText : string;
+				if(it.start.line > 0) {
+					oneBeforeText = document.lineAt(it.start.line - 1).text;
+				} else {
+					oneBeforeText = "";
+				}
+				
 				// TODO: Auto-indent if surrounded by braces etc.
-				edit.insert(it.start, '\n' + prefix);
+				console.log(
+					JSON.stringify(prefix) +
+					" " + JSON.stringify(oneBeforeText) +
+					" " + JSON.stringify(beforeText) +
+					" " + JSON.stringify(afterText)
+				);
+				let action : number = vscode.IndentAction.None;
+				
+				switch(action) {
+				case vscode.IndentAction.Indent:
+					edit.insert(it.start, '\n' + tab + prefix);
+					break;
+				case vscode.IndentAction.IndentOutdent:
+					edit.insert(it.start, '\n' + tab + prefix);
+					if(afterText.length > 0) {
+						// Inserting text after the selection is a bit tricky
+						// without affecting the selection, so insert text
+						// after afterText, then delete up to that insertion.
+						let after = it.end.translate(0, afterText.length);
+						edit.insert(after, '\n' + prefix + afterText);
+						edit.delete(new vscode.Range(it.end, after));
+					}
+					break;
+				case vscode.IndentAction.Outdent:
+					// Outdent only if there are leading tabs in the prefix.
+					if(prefix.startsWith(tab)) {
+						edit.insert(it.start, '\n' + prefix.substring(tab.length));
+					} else {
+						edit.insert(it.start, '\n' + prefix);
+					}
+					break;
+				default:
+					// Do not change indentation, just copy from above.
+					edit.insert(it.start, '\n' + prefix);
+					break;
+				}
 			});
 		});
 	});
